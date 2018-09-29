@@ -2,7 +2,6 @@
  * Nathan Bleuzen, 2018
  *
  * TODO list:
- * - Monitor time drifting on long period between sync
  * - 3D print 7seg display and assemble with LEDs
  * - Add ws2812b 7seg digit implementation
  * - Add display on 7seg of weather informations (numbers and colors/brightness)
@@ -10,22 +9,24 @@
  * - Build weather station...
  * - Add color/brightness shifting depending on time of the day
  */
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <TimeLib.h>
 #include <ArduinoJson.h>
+#include "Clock.hpp"
+#include "serialClock.hpp"
 
 const char* wifiSSID = "ssid";
 const char* wifiPassword = "password";
 const char* getTimeRequest = "http://api.timezonedb.com/v2.1/get-time-zone?key=API_KEY&format=json&by=zone&zone=Europe/Paris&fields=timestamp";
-const size_t jsonBufferSize = JSON_OBJECT_SIZE(3) + 50;
-time_t prevTime = 0; // when the last digital clock was displayed
+static const size_t jsonBufferSize = JSON_OBJECT_SIZE(3) + 50;
+static time_t prevTime = 0; // when the last digital clock was displayed
+static Clock * clock;
 
-void setup_serial(void);
-void setup_wifi(void);
+static void setup_serial(void);
+static void setup_wifi(void);
 time_t get_local_time(void);
-void digital_clock_display(void);
-void print_double_digit(const int digits);
 
 void setup()
 {
@@ -33,7 +34,9 @@ void setup()
     setup_wifi();
 
     setSyncProvider(get_local_time);
-    setSyncInterval(900); // TODO: change to larger value
+    setSyncInterval(300); // Sync time every 5min
+
+    clock = new Clock(6, 4);
 }
 
 void loop()
@@ -51,7 +54,7 @@ void loop()
 /********************/
 /* HELPER FUNCTIONS */
 /********************/
-void setup_serial(void)
+static void setup_serial(void)
 {
     Serial.begin(9600);
     while (!Serial)
@@ -62,7 +65,7 @@ void setup_serial(void)
     Serial.println("Serial initialized");
 }
 
-void setup_wifi(void)
+static void setup_wifi(void)
 {
     WiFi.begin(wifiSSID, wifiPassword); // Connect to the WiFi
     digitalWrite(LED_BUILTIN, LOW); // Turn error led on
@@ -113,32 +116,4 @@ time_t get_local_time(void)
         Serial.println(message);
         return 0UL;
     }
-}
-
-/*********************/
-/* DISPLAY FUNCTIONS */
-/*********************/
-void digital_clock_display(void)
-{
-    // Digital clock display
-    print_double_digit(hour());
-    Serial.print(":");
-    print_double_digit(minute());
-    Serial.print(":");
-    print_double_digit(second());
-    Serial.print(" ");
-    print_double_digit(day());
-    Serial.print(".");
-    print_double_digit(month());
-    Serial.print(".");
-    Serial.print(year());
-    Serial.println();
-}
-
-void print_double_digit(const int digits)
-{
-    // Prints leading 0
-    if (digits < 10)
-        Serial.print('0');
-    Serial.print(digits);
 }

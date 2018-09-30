@@ -3,7 +3,6 @@
  *
  * TODO list:
  * - 3D print 7seg display and assemble with LEDs
- * - Add ws2812b 7seg digit implementation
  * - Add display on 7seg of weather informations (numbers and colors/brightness)
  * - Add REST request on weather station
  * - Build weather station...
@@ -14,15 +13,13 @@
 #include <ESP8266HTTPClient.h>
 #include <TimeLib.h>
 #include <ArduinoJson.h>
+#include "locals.h"
 #include "Clock.hpp"
 #include "serialClock.hpp"
 
-const char* wifiSSID = "ssid";
-const char* wifiPassword = "password";
-const char* getTimeRequest = "http://api.timezonedb.com/v2.1/get-time-zone?key=API_KEY&format=json&by=zone&zone=Europe/Paris&fields=timestamp";
+static Clock clock(stripDataPin, numSevenSeg); // A clock made of LED seven segments
 static const size_t jsonBufferSize = JSON_OBJECT_SIZE(3) + 50;
 static time_t prevTime = 0; // when the last digital clock was displayed
-static Clock * clock;
 
 static void setup_serial(void);
 static void setup_wifi(void);
@@ -35,8 +32,6 @@ void setup()
 
     setSyncProvider(get_local_time);
     setSyncInterval(300); // Sync time every 5min
-
-    clock = new Clock(6, 4);
 }
 
 void loop()
@@ -46,7 +41,8 @@ void loop()
         if (now() != prevTime) // Update the display only if time has changed
         {
             prevTime = now();
-            digital_clock_display();
+            digital_clock_display(); // Print time and date on serial
+            clock.display(hour(), minute()); // Print time on LED seven segments
         }
     }
 }

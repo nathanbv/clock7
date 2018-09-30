@@ -1,3 +1,7 @@
+/*
+ * Nathan Bleuzen, 2018
+ */
+
 #include <Adafruit_NeoPixel.h>
 #include "SevenSeg.hpp"
 

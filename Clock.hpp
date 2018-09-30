@@ -2,21 +2,24 @@
  * Nathan Bleuzen, 2018
  */
 
-#include <Adafruit_NeoPixel.h>
+#ifndef CLOCK_HPP
+#define CLOCK_HPP
+
 #include "SevenSeg.hpp"
+
+extern Adafruit_NeoPixel strip;
 
 class Clock
 {
 public:
-    Clock(int dataPin, int pixelPerSeg);
+    Clock(uint8_t nbDigit, uint8_t pixelPerSeg);
     ~Clock();
+    void begin(void);
     void display(uint8_t hours, uint8_t minutes);
 
 private:
-    const int m_dataPin;
-    const int m_pixelPerSeg;
-    Adafruit_NeoPixel m_strip;
+    const uint8_t m_nbDigit;
     SevenSeg * m_digits[4];
-
-    static const int s_nbDigit;
 };
+
+#endif // CLOCK_HPP

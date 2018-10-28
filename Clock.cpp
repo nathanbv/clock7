@@ -25,11 +25,11 @@ void Clock::begin(void)
 
 void Clock::display(uint8_t hours, uint8_t minutes)
 {
-    uint16_t num = hours * 100 + minutes;
+    uint16_t timeDesc = hours * 100 + minutes;
     for (int8_t iter = m_nbDigit - 1; iter >= 0; --iter)
     {
-        m_digits[iter]->display(SevenSeg::indexToChar(num % 10));
-        num /= 10;
+        m_digits[iter]->display(SevenSeg::indexToChar(timeDesc % 10));
+        timeDesc /= 10;
     }
-    strip.show();
+    strip.Show();
 }

@@ -7,7 +7,7 @@
 
 #include "SevenSeg.hpp"
 
-extern Adafruit_NeoPixel strip;
+extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 class Clock
 {

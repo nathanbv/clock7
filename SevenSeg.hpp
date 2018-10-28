@@ -13,9 +13,9 @@
 #ifndef SEVENSEG_HPP
 #define SEVENSEG_HPP
 
-#include <Adafruit_NeoPixel.h>
+#include <NeoPixelBus.h>
 
-extern Adafruit_NeoPixel strip;
+extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 class SevenSeg
 {
@@ -54,7 +54,7 @@ public:
 private:
     const uint8_t m_stripOffset;
     const uint8_t m_pixelPerSeg;
-    uint32_t m_color;
+    RgbColor m_color;
 };
 
 #endif // SEVENSEG_HPP

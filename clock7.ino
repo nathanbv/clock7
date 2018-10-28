@@ -11,17 +11,14 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <Adafruit_NeoPixel.h>
+#include <NeoPixelBus.h>
 #include <TimeLib.h>
 #include <ArduinoJson.h>
 #include "locals.h"
 #include "Clock.hpp"
 #include "serialClock.hpp"
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(
-        pixelPerSeg * 7 * nbSevenSegs,
-        stripDataPin,
-        NEO_GRB + NEO_KHZ800);
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(pixelPerSeg * 7 * nbSevenSegs); // Uses ESP8266 GPIO3
 static Clock clock = Clock(nbSevenSegs, pixelPerSeg); // A clock made of NeoPixel seven segments displays
 static const size_t jsonBufferSize = JSON_OBJECT_SIZE(3) + 50;
 static time_t prevTime = 0; // when the last digital clock was displayed
@@ -38,7 +35,8 @@ void setup()
     setSyncProvider(get_local_time);
     setSyncInterval(300); // Sync time every 5min
 
-    strip.begin();
+    strip.Begin();
+    strip.Show(); // Resets the strip to black
     clock.begin();
 }
 

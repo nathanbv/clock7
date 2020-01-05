@@ -38,7 +38,7 @@ void Clock::init()
 
     // 2 dots in the center, between minutes and hours
     uint8_t centerOffset = nbSevenSegPerSide * nbPixelPerSeg * nbSegPerSevenSeg;
-    for (uint8_t iter = 0; iter < 2; ++iter)
+    for (uint8_t iter = 0; iter < nbCenterDot; ++iter)
         m_dots.push_back(CenterDot(centerOffset + (iter * nbPixelPerDot)));
 
     // 2 digits are used for the hour part of the clock

@@ -2,7 +2,6 @@
  * Nathan Bleuzen, 2018
  *
  * TODO list:
- * - 3D print 7seg display and assemble with LEDs
  * - Add display on 7seg of weather informations (numbers and colors/brightness)
  * - Add REST request on weather station
  * - Build weather station...
@@ -10,9 +9,9 @@
  */
 
 #include <ESP8266WiFi.h>
-
 #include "Clock.hpp"
 #include "config.h"
+
 static const uint8_t nbTotalPixel = (nbSevenSeg * nbSegPerSevenSeg * nbPixelPerSeg) + (nbCenterDot * nbPixelPerDot);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP8266 GPIO3 (RX on NodeMCU & co)
 Clock clock7; // A clock made of NeoPixel seven segments displays
@@ -28,6 +27,7 @@ void setup()
     setup_wifi();
 
     clock7.init();
+    clock7.display();
 }
 
 void loop()

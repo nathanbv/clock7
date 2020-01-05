@@ -22,7 +22,6 @@ class Logger
 public:
     void init(logLevel thresh, uint32_t rate = 9600);
     void log(const logLevel prio, const char * format, ...);
-    void log(const char * format, ...);
 
 private:
     void log_write(const logLevel prio, const char * format, va_list args);

@@ -7,9 +7,7 @@
 
 Clock::Clock():
         m_prevTime(0)
-{
-    m_timeProvider.init();
-}
+{}
 
 Clock::~Clock()
 {
@@ -19,12 +17,18 @@ Clock::~Clock()
 
 void Clock::init()
 {
+    // Initialize the most crucial part of a clock...
+    m_timeProvider.init();
+
     // The Clock7 requires 4 SevenSegment digits with 2 CenterDots in the middle
     if ((nbSevenSeg != 4) || (nbCenterDot != 2)) {
         logger.log(LOG_ERR, "Incorrect number of displays ! The full Clock7 requires 4 digits (%d) and 2 dots (%d)", nbSevenSeg, nbCenterDot);
+//TODO: Temporary workaround, waiting for the the second CenterDot to be available
+/*
         m_digits.clear();
         m_dots.clear();
         return;
+*/
     }
 
     const uint8_t nbSevenSegPerSide = 2;
@@ -52,10 +56,10 @@ void Clock::init()
 void Clock::update(void)
 {
     // Update the display only if time has changed
-    if (!m_timeProvider.isReady() || m_timeProvider.now() == m_prevTime)
+    if (!m_timeProvider.isReady() || m_timeProvider.get_time() == m_prevTime)
         return;
 
-    m_prevTime = m_timeProvider.now(); // Get the current time accurate to the second
+    m_prevTime = m_timeProvider.get_time(); // Get the current time accurate to the second
 
     // Update the display every minute
     if ((m_prevTime % 60) == 0)
@@ -77,6 +81,5 @@ void Clock::display(void)
     strip.Show();
 
     // Log to serial
-    logger.log(LOG_DEBUG, "%d", m_timeProvider.get_decimal_time());
-    logger.log("%s", m_timeProvider.get_date().c_str());
+    logger.log(LOG_INFO, "%s", m_timeProvider.get_date().c_str());
 }

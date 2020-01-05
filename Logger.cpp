@@ -8,7 +8,7 @@
 // Unique intstance of Logger
 Logger logger;
 
-void Logger::init(logLevel thresh, uint32_t rate)
+void Logger::init(logLevel thresh, uint32_t rate /* = 9600 */)
 {
     m_logLevelThresh = thresh;
     if (m_logLevelThresh == LOG_OFF)
@@ -48,12 +48,6 @@ void Logger::log(const logLevel prio, const char * format, ...)
     va_end(args);
 }
 
-void Logger::log(const char * format, ...)
-{
-    va_list args;
-    log(LOG_INFO, format, args);
-}
-
 void Logger::log_write(const logLevel prio, const char * format, va_list args)
 {
     const uint8_t bufsize = 127;
@@ -65,8 +59,9 @@ void Logger::log_write(const logLevel prio, const char * format, va_list args)
         ret = bufsize-1;
     if (Serial && (ret >= 0))
     {
+        Serial.println();
         Serial.print(logLevel_to_str(prio));
-        Serial.println(buf);
+        Serial.print(buf);
     }
 }
 
@@ -74,12 +69,12 @@ const char * Logger::logLevel_to_str(const logLevel type)
 {
     switch(type)
     {
-        case LOG_CRIT:   return "CRIT: ";
-        case LOG_ERR:    return "ERR:  ";
-        case LOG_WARN:   return "WARN: ";
-        case LOG_NOTICE: return "NOTE: ";
-        case LOG_INFO:   return "INFO: ";
-        case LOG_DEBUG:  return "DEBUG:";
+        case LOG_CRIT:   return "FATAL:  ";
+        case LOG_ERR:    return "ERROR:  ";
+        case LOG_WARN:   return "WARNING:";
+        case LOG_NOTICE: return "NOTE:   ";
+        case LOG_INFO:   return "INFO:   ";
+        case LOG_DEBUG:  return "DEBUG:  ";
     }
     return "LOG:  ";
 }

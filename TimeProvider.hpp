@@ -14,13 +14,15 @@ public:
     ~TimeProvider() {};
     void init(void);
     bool isReady();
-    time_t now(void);
+    time_t get_time(void);
     uint16_t get_decimal_time(void);
-    const std::string & get_date(void);
+    const std::string get_date(void);
 
-    static time_t get_local_time(void);
 private:
-    const std::string & get_double_digit(const int digits);
+    const std::string to_double_digit(const int digits);
+
+    static time_t sync_server_time(void);
+    static const size_t m_jsonResponseSize;
 };
 
 #endif // TIMEPROVIDER_HPP

@@ -5,21 +5,25 @@
 #ifndef CLOCK_HPP
 #define CLOCK_HPP
 
+#include "CenterDot.hpp"
 #include "SevenSeg.hpp"
-
-extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+#include "TimeProvider.hpp"
+#include <vector>
 
 class Clock
 {
 public:
-    Clock(uint8_t nbDigit, uint8_t pixelPerSeg);
+    Clock();
     ~Clock();
-    void begin(void);
-    void display(uint8_t hours, uint8_t minutes);
+    void init(void);
+    void update(void);
+    void display(void);
 
 private:
-    const uint8_t m_nbDigit;
-    SevenSeg * m_digits[4];
+    time_t m_prevTime;
+    TimeProvider m_timeProvider;
+    std::vector<SevenSeg> m_digits;
+    std::vector<CenterDot> m_dots;
 };
 
 #endif // CLOCK_HPP

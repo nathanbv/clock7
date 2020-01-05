@@ -10,64 +10,34 @@
  */
 
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <NeoPixelBus.h>
-#include <TimeLib.h>
-#include <ArduinoJson.h>
-#include "locals.h"
+
 #include "Clock.hpp"
-#include "serialClock.hpp"
+#include "config.h"
+static const uint8_t nbTotalPixel = (nbSevenSeg * nbSegPerSevenSeg * nbPixelPerSeg) + (nbCenterDot * nbPixelPerDot);
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP8266 GPIO3 (RX on NodeMCU & co)
+Clock clock7; // A clock made of NeoPixel seven segments displays
 
-NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(pixelPerSeg * 7 * nbSevenSegs); // Uses ESP8266 GPIO3
-static Clock clock = Clock(nbSevenSegs, pixelPerSeg); // A clock made of NeoPixel seven segments displays
-static const size_t jsonBufferSize = JSON_OBJECT_SIZE(3) + 50;
-static time_t prevTime = 0; // when the last digital clock was displayed
-
-static void setup_serial(void);
 static void setup_wifi(void);
-time_t get_local_time(void);
 
 void setup()
 {
-    setup_serial();
-    setup_wifi();
-
-    setSyncProvider(get_local_time);
-    setSyncInterval(300); // Sync time every 5min
-
     strip.Begin();
     strip.Show(); // Resets the strip to black
-    clock.begin();
+
+    logger.init(LOG_DEBUG);
+    setup_wifi();
+
+    clock7.init();
 }
 
 void loop()
 {
-    if (timeStatus() != timeNotSet)
-    {
-        if (now() != prevTime) // Update the display only if time has changed
-        {
-            prevTime = now();
-            digital_clock_display(); // Print time and date on serial
-            if ((prevTime % 60) == 0)
-                clock.display(hour(), minute()); // Print time on LED seven segments
-        }
-    }
+    clock7.update();
 }
 
 /********************/
-/* HELPER FUNCTIONS */
+/* HELPER FUNCTION */
 /********************/
-static void setup_serial(void)
-{
-    Serial.begin(115200);
-    while (!Serial)
-    {
-        delay(250);
-    }
-    Serial.println();
-    Serial.println("Serial initialized");
-}
-
 static void setup_wifi(void)
 {
     WiFi.begin(wifiSSID, wifiPassword); // Connect to the WiFi
@@ -77,46 +47,5 @@ static void setup_wifi(void)
         delay(250);
     }
     digitalWrite(LED_BUILTIN, HIGH);
-    Serial.print("WiFi connected @");
-    Serial.println(WiFi.localIP());
-}
-
-/**************************/
-/* TIME PROVIDER FUNCTION */
-/**************************/
-time_t get_local_time(void)
-{
-    HTTPClient http;
-    http.begin(getTimeRequest);
-    const int err = http.GET();
-    if (err < 0)
-    {
-        Serial.print("HTTP GET error: ");
-        Serial.println(err);
-        http.end();
-        return 0UL;
-    }
-
-    DynamicJsonBuffer jsonBuffer(jsonBufferSize);
-    const JsonObject& root = jsonBuffer.parseObject(http.getString());
-    http.end();
-
-    const char* status = root["status"];
-    if (strcmp(status, "OK") == 0)
-    {
-        unsigned long timestamp = root["timestamp"].as<unsigned long>();
-        const long diff = prevTime - timestamp;
-        Serial.print("Time sync: clock is ");
-        Serial.print((diff < 0) ? -1*diff : diff);
-        Serial.println((diff < 0) ? "sec late" : "sec ahead");
-        return timestamp;
-    }
-    else
-    {
-        const char* message = root["message"];
-        Serial.print(status);
-        Serial.print(" API error: ");
-        Serial.println(message);
-        return 0UL;
-    }
+    logger.log(LOG_INFO, "WiFi connected @%s", WiFi.localIP().toString().c_str());
 }

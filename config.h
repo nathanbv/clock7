@@ -16,7 +16,7 @@ extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 const uint8_t nbSevenSeg = 4;
 const uint8_t nbPixelPerSeg = 4;
 const uint8_t nbSegPerSevenSeg = 7;
-const uint8_t nbCenterDot = 1;
+const uint8_t nbCenterDot = 2;
 const uint8_t nbPixelPerDot = 4;
 
 const RgbColor onColor = RgbColor(64, 64, 64);

@@ -30,6 +30,7 @@ void Logger::init(logLevel thresh, uint32_t rate /* = 9600 */)
         return;
     }
     m_initSuccess = true;
+    Serial.flush();
     log(LOG_DEBUG, "\n");
     log(LOG_DEBUG, "------------------");
     log(LOG_DEBUG, "Serial initialized");

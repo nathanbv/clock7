@@ -26,10 +26,11 @@ static TestDisplayCounter testCounter = TestDisplayCounter(); // A display made 
 
 void setup()
 {
+    logger.init(LOG_DEBUG);
+
     strip.Begin();
     strip.Show(); // Resets the strip to black
 
-    logger.init(LOG_DEBUG);
     setup_wifi();
 
 #ifndef TEST_MODE

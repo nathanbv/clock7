@@ -30,7 +30,7 @@ private:
     std::vector<SevenSeg> m_digits;
     std::vector<CenterDot> m_dots;
 
-    static const uint16_t s_delayCounterMs;
+    static const uint16_t s_updatePeriodInMSec;
 };
 
 #endif // COUNTER_HPP

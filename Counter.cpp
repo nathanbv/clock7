@@ -7,20 +7,20 @@
 
 using namespace std;
 
-const uint16_t Counter::s_delayCounterMs = 1000; // Count up every second
+const uint16_t Counter::s_updatePeriodInMSec = 1000; // Count up every second
 
 Counter::Counter(uint8_t inc):
         m_inc(inc),
         m_count(0),
         m_prevTime(0),
-        m_interTime(s_delayCounterMs)
+        m_interTime(s_updatePeriodInMSec)
 { }
 
 Counter::Counter():
         m_inc(1),
         m_count(0),
         m_prevTime(0),
-        m_interTime(s_delayCounterMs)
+        m_interTime(s_updatePeriodInMSec)
 { }
 
 Counter::~Counter()

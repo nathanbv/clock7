@@ -10,8 +10,10 @@ extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 #include "Logger.hpp"
 
-// Uncomment to use LED strip test mode: Displays a counter sounting up on the defined number of digits and dots
-//#define USE_LED_TEST_MODE 1
+// Uncomment to disable the clock and use test mode and then uncomment the selected test
+#define TEST_MODE 1
+// TEST_COUNTER_MODE: Displays a counter counting up on the defined number of digits
+#define TEST_COUNTER_MODE 1
 
 const uint8_t nbSevenSeg = 4;
 const uint8_t nbPixelPerSeg = 4;

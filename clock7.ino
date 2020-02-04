@@ -9,14 +9,20 @@
  */
 
 #include <ESP8266WiFi.h>
-#include "Clock.hpp"
 #include "config.h"
+
+static void setup_wifi(void);
 
 static const uint8_t nbTotalPixel = (nbSevenSeg * nbSegPerSevenSeg * nbPixelPerSeg) + (nbCenterDot * nbPixelPerDot);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP8266 GPIO3 (RX on NodeMCU & co)
-Clock clock7; // A clock made of NeoPixel seven segments displays
 
-static void setup_wifi(void);
+#ifndef TEST_MODE
+#include "Clock.hpp"
+Clock clock7; // A clock made of NeoPixel seven segments displays
+#elif defined(TEST_COUNTER_MODE)
+#include "TestDisplayCounter.hpp"
+static TestDisplayCounter testCounter = TestDisplayCounter(); // A display made of NeoPixel seven segments displays and center dots
+#endif
 
 void setup()
 {
@@ -26,13 +32,22 @@ void setup()
     logger.init(LOG_DEBUG);
     setup_wifi();
 
+#ifndef TEST_MODE
     clock7.init();
     clock7.display();
+#elif defined(TEST_COUNTER_MODE)
+    logger.log(LOG_WARN, "TEST COUNTER MODE ENABLED");
+    testCounter.begin();
+#endif
 }
 
 void loop()
 {
+#ifndef TEST_MODE
     clock7.update();
+#elif defined(TEST_COUNTER_MODE)
+    testCounter.update();
+#endif
 }
 
 /********************/

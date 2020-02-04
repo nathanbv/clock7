@@ -11,9 +11,9 @@ extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 #include "Logger.hpp"
 
 // Uncomment to disable the clock and use test mode and then uncomment the selected test
-#define TEST_MODE 1
+//#define TEST_MODE 1
 // TEST_COUNTER_MODE: Displays a counter counting up on the defined number of digits
-#define TEST_COUNTER_MODE 1
+//#define TEST_COUNTER_MODE 1
 
 const uint8_t nbSevenSeg = 4;
 const uint8_t nbPixelPerSeg = 4;

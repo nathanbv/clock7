@@ -10,6 +10,7 @@
 
 #include <ESP8266WiFi.h>
 #include "config.h"
+#include "Counter.hpp"
 
 static void setup_wifi(void);
 
@@ -20,8 +21,9 @@ NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP826
 #include "Clock.hpp"
 Clock clock7; // A clock made of NeoPixel seven segments displays
 #elif defined(TEST_COUNTER_MODE)
-#include "TestDisplayCounter.hpp"
-static TestDisplayCounter testCounter = TestDisplayCounter(); // A display made of NeoPixel seven segments displays and center dots
+// A display made of NeoPixel seven segments displays and center dots
+// When using more than 2 digits, increment minutes and hour parts at the same time
+static Counter testCounter = Counter((nbSevenSeg > 2) ? 101 : 1);
 #endif
 
 void setup()
@@ -38,7 +40,7 @@ void setup()
     clock7.display();
 #elif defined(TEST_COUNTER_MODE)
     logger.log(LOG_WARN, "TEST COUNTER MODE ENABLED");
-    testCounter.begin();
+    testCounter.init();
 #endif
 }
 
@@ -56,12 +58,15 @@ void loop()
 /********************/
 static void setup_wifi(void)
 {
+    Counter wifiInitCounter;
+    wifiInitCounter.init();
     WiFi.begin(wifiSSID, wifiPassword); // Connect to the WiFi
-    digitalWrite(LED_BUILTIN, LOW); // Turn error led on
+    logger.log(LOG_DEBUG, "Connecting WiFi on %s", wifiSSID);
     while (WiFi.status() != WL_CONNECTED)
     {
+        logger.log(LOG_DEBUG, "...");
+        wifiInitCounter.update();
         delay(250);
     }
-    digitalWrite(LED_BUILTIN, HIGH);
-    logger.log(LOG_INFO, "WiFi connected @%s", WiFi.localIP().toString().c_str());
+    logger.log(LOG_INFO, "WiFi connected @%s on %s", WiFi.localIP().toString().c_str(), wifiSSID);
 }

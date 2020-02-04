@@ -2,27 +2,34 @@
  * Nathan Bleuzen, 2018
  */
 
-#include "TestDisplayCounter.hpp"
+#include "Counter.hpp"
 #include "config.h"
 
 using namespace std;
 
-#define DELAY_COUNTER_MS 2000
+const uint16_t Counter::s_delayCounterMs = 1000; // Count up every second
 
-TestDisplayCounter::TestDisplayCounter():
-        m_inc((nbSevenSeg > 2) ? 101 : 1),
+Counter::Counter(uint8_t inc):
+        m_inc(inc),
         m_count(0),
         m_prevTime(0),
-        m_interTime(DELAY_COUNTER_MS)
+        m_interTime(s_delayCounterMs)
 { }
 
-TestDisplayCounter::~TestDisplayCounter()
+Counter::Counter():
+        m_inc(1),
+        m_count(0),
+        m_prevTime(0),
+        m_interTime(s_delayCounterMs)
+{ }
+
+Counter::~Counter()
 {
     m_digits.clear();
     m_dots.clear();
 }
 
-void TestDisplayCounter::begin(void)
+void Counter::init(void)
 {
     // If there is more than 2 SevenSeg digits, we need to account for the CenterDots
     const uint8_t nbSevenSegPerSide = (nbSevenSeg > 2) ? 2 : nbSevenSeg;
@@ -48,7 +55,7 @@ void TestDisplayCounter::begin(void)
         dot.set_color(onColor);
 }
 
-void TestDisplayCounter::update(void)
+void Counter::update(void)
 {
     if (millis() >= (m_prevTime + m_interTime)) // Update the display every second
     {
@@ -59,14 +66,14 @@ void TestDisplayCounter::update(void)
     }
 }
 
-void TestDisplayCounter::updateCounter(void)
+void Counter::updateCounter(void)
 {
     m_count += m_inc;
     if (m_count >= pow(10, nbSevenSeg))
         m_count = 0;
 }
 
-void TestDisplayCounter::display(uint16_t num)
+void Counter::display(uint16_t num)
 {
     for (SevenSeg & digit : m_digits)
     {

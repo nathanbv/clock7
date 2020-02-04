@@ -79,14 +79,15 @@ void Clock::display(void)
 {
     // Get the time as a decimal number with the form HHMM
     uint16_t timeDesc = m_timeProvider.get_decimal_time();
-    for (int8_t iter = m_digits.size() - 1; iter >= 0; --iter)
+    for (SevenSeg & digit : m_digits)
     {
-        m_digits[iter].display(SevenSeg::indexToChar(timeDesc % 10));
+        digit.display(SevenSeg::indexToChar(timeDesc % 10));
         timeDesc /= 10;
     }
     // Light-up center dots
     for (CenterDot & dot : m_dots)
         dot.display(true);
+
     strip.Show();
 
     // Log to serial

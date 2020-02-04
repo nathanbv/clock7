@@ -28,7 +28,7 @@ void ColorProvider::updateSunriseColor(void)
         s_wakeUpLightTable[m_count][0],  /* Red */
         s_wakeUpLightTable[m_count][1],  /* Green */
         s_wakeUpLightTable[m_count][2]); /* Blue */
-    logger.log(LOG_DEBUG, "Sunset color: [%d] = R%3d G%3d B%3d", m_count, s_wakeUpLightTable[m_count][0], s_wakeUpLightTable[m_count][1], s_wakeUpLightTable[m_count][2]);
+    logger.log(LOG_DEBUG, "Sunset color: [%d] = R%3d G%3d B%3d", m_count, m_color.R, m_color.G, m_color.B);
 
     // Update the cyclic counter for next color to use
     if (++m_count > 255)

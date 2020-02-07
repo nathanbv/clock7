@@ -17,8 +17,8 @@ public:
     time_t get_time(void);
     uint16_t get_decimal_time(void);
     const std::string get_date(void);
+    const std::string get_date(time_t fromTime);
     const bool is_sunrise(void);
-    const bool is_sundown(void);
 
 private:
     const std::string to_double_digit(const int digits);

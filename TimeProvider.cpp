@@ -15,14 +15,17 @@ using namespace std;
 
 const size_t TimeProvider::s_jsonResponseSize = JSON_OBJECT_SIZE(3) + 40;
 
-// Use time as a decimal representation with the form HHMM
-#define SUNRISE_BEGIN_TIME 800
-#define SUNRISE_END_TIME 900
-#define SUNDOWN_BEGIN_TIME 2100
-#define SUNDOWN_END_TIME SUNRISE_BEGIN_TIME
+// Sunrise starts at 8:01 every morning and ends at 9:00
+static const time_t sunriseBeginning = hoursToTime_t(8) + minutesToTime_t(1);
+static const time_t sunriseEnd       = hoursToTime_t(9) + minutesToTime_t(0);
 
 void TimeProvider::init(void)
 {
+#ifdef TEST_SET_TIME
+    setTime(SET_TIME_HOUR, SET_TIME_MINUTE, 0 /* sec */, 1 /* day */, 1 /* mnth */, 2000 /* yr */);
+    return;
+#endif
+
     setSyncProvider(sync_server_time); // Set the function used to synchronize the time
     setSyncInterval(300);              // Sync time every 5 minutes
 }
@@ -44,16 +47,21 @@ uint16_t TimeProvider::get_decimal_time(void)
     return hour() * 100 + minute();
 }
 
-// Returns "HH:MM:SS DD.MM.YYYY"
 const string TimeProvider::get_date(void)
 {
+    return get_date(now());
+}
+
+// Returns "HH:MM:SS DD.MM.YYYY"
+const string TimeProvider::get_date(time_t fromTime)
+{
     ostringstream date;
-    date << to_double_digit(hour()) << ":";
-    date << to_double_digit(minute()) << ":";
-    date << to_double_digit(second()) << " ";
-    date << to_double_digit(day()) << ".";
-    date << to_double_digit(month()) << ".";
-    date << year();
+    date << to_double_digit(hour(fromTime)) << ":";
+    date << to_double_digit(minute(fromTime)) << ":";
+    date << to_double_digit(second(fromTime)) << " ";
+    date << to_double_digit(day(fromTime)) << ".";
+    date << to_double_digit(month(fromTime)) << ".";
+    date << year(fromTime);
     return date.str();
 }
 
@@ -72,12 +80,11 @@ const string TimeProvider::to_double_digit(const int digits)
 
 const bool TimeProvider::is_sunrise(void)
 {
-    return ((SUNRISE_BEGIN_TIME < get_decimal_time()) && (get_decimal_time() < SUNRISE_END_TIME));
-}
-
-const bool TimeProvider::is_sundown(void)
-{
-    return ((SUNDOWN_BEGIN_TIME < get_decimal_time()) && (get_decimal_time() < SUNDOWN_END_TIME));
+    time_t timeNow = now();
+    time_t todaysSunriseBeginning = previousMidnight(timeNow) + sunriseBeginning;
+    time_t todaysSunriseEnd =       previousMidnight(timeNow) + sunriseEnd;
+    logger.log(LOG_DEBUG, "Today's sunrise starts at %s and ends at %s", get_date(todaysSunriseBeginning).c_str(), get_date(todaysSunriseEnd).c_str());
+    return ((todaysSunriseBeginning < timeNow) && (timeNow < todaysSunriseEnd));
 }
 
 time_t TimeProvider::sync_server_time(void)

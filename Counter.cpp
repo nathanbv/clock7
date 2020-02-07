@@ -48,11 +48,17 @@ void Counter::init(void)
     for (uint8_t iter = 0; iter < (nbSevenSeg - nbSevenSegPerSide); ++iter)
         m_digits.push_back(SevenSeg(hourPartOffset + (iter * nbPixelPerSeg * nbSegPerSevenSeg)));
 
-    // Set the default color to a low bright white-ish
+    // Set the default color
+    set_color(onColor);
+}
+
+// Sets the color on the whole display
+void Counter::set_color(RgbColor color)
+{
     for (SevenSeg & digit : m_digits)
-        digit.set_color(onColor);
+        digit.set_color(color);
     for (CenterDot & dot : m_dots)
-        dot.set_color(onColor);
+        dot.set_color(color);
 }
 
 void Counter::update(void)

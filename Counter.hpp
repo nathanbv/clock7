@@ -19,6 +19,7 @@ public:
     void update(void);
 
 private:
+    void set_color(RgbColor color);
     void updateCounter(void);
     void display(uint16_t num);
 

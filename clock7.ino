@@ -14,14 +14,15 @@
 static const uint8_t nbTotalPixel = (nbSevenSeg * nbSegPerSevenSeg * nbPixelPerSeg) + (nbCenterDot * nbPixelPerDot);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP8266 GPIO3 (RX on NodeMCU & co)
 
-#ifndef TEST_MODE
-#include "Clock.hpp"
-Clock clock7; // A clock made of NeoPixel seven segments displays
-#elif defined(TEST_COUNTER_MODE)
+
+#ifdef TEST_COUNTER_MODE
 #include "Counter.hpp"
 // A display made of NeoPixel seven segments displays and center dots
 // When using more than 2 digits, increment minutes and hour parts at the same time
 static Counter testCounter = Counter((nbSevenSeg > 2) ? 101 : 1);
+#else
+#include "Clock.hpp"
+Clock clock7; // A clock made of NeoPixel seven segments displays
 #endif
 
 void setup()

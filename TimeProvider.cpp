@@ -15,9 +15,9 @@ using namespace std;
 
 const size_t TimeProvider::s_jsonResponseSize = JSON_OBJECT_SIZE(3) + 40;
 
-// Sunrise starts at 8:01 every morning and ends at 9:00
-static const time_t sunriseBeginning = hoursToTime_t(8) + minutesToTime_t(1);
-static const time_t sunriseEnd       = hoursToTime_t(9) + minutesToTime_t(0);
+// Sunrise starts at 8:01 every morning and ends 15 minutes later
+static const time_t sunriseBeginning = hoursToTime_t(8) + minutesToTime_t(0);
+static const time_t sunriseEnd       = sunriseBeginning + minutesToTime_t(10);
 
 void TimeProvider::init(void)
 {
@@ -83,7 +83,6 @@ const bool TimeProvider::is_sunrise(void)
     time_t timeNow = now();
     time_t todaysSunriseBeginning = previousMidnight(timeNow) + sunriseBeginning;
     time_t todaysSunriseEnd =       previousMidnight(timeNow) + sunriseEnd;
-    logger.log(LOG_DEBUG, "Today's sunrise starts at %s and ends at %s", get_date(todaysSunriseBeginning).c_str(), get_date(todaysSunriseEnd).c_str());
     return ((todaysSunriseBeginning < timeNow) && (timeNow < todaysSunriseEnd));
 }
 

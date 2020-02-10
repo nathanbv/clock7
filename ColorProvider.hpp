@@ -18,11 +18,10 @@ private:
     void updateSunriseColor(void);
 
     uint16_t m_count;
-    RgbColor m_color;
     time_t m_prevTime; // Last timestamp at which the color was updated
+    HslColor m_hslColor;
 
     static const uint8_t s_updatePeriodInSec; // Time in second between 2 updates of the color
-    static const uint8_t s_sunriseColorTable[256][3]; // Table of ordered {r,g,b} values to use as sunrise colors
 };
 
 #endif // COLORPROVIDER_HPP

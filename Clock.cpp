@@ -57,8 +57,11 @@ void Clock::update(void)
 
     m_prevTime = m_timeProvider.get_time(); // Get the current time accurate to the second
     // If the sun is raising get the appropriate color
-    if (m_timeProvider.is_sunrise())
-        set_color(m_colorProvider.getSunriseColor(m_timeProvider.get_time()));
+    if (m_timeProvider.is_sunrise()) {
+        RgbColor colorTmp = m_colorProvider.getSunriseColor(m_timeProvider.get_time());
+        set_color(colorTmp);
+        //logger.log(LOG_DEBUG, "Sunrise color: R%3d G%3d B%3d", colorTmp.R, colorTmp.G, colorTmp.B);
+    }
     // Otherwise use default one
     else
         set_color(onColor);
@@ -90,6 +93,7 @@ void Clock::display(void)
 
     strip.Show();
 
-    // Log to serial
-    logger.log(LOG_INFO, "%s", m_timeProvider.get_date().c_str());
+    // Log time to serial every minute
+    if ((m_prevTime % 60) == 0)
+        logger.log(LOG_INFO, "%s", m_timeProvider.get_date().c_str());
 }

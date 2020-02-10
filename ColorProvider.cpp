@@ -17,6 +17,11 @@ ColorProvider::ColorProvider():
         m_prevTime(0)
 { }
 
+void ColorProvider::resetSunriseColor(void)
+{
+    m_prevTime = 0;
+}
+
 RgbColor ColorProvider::getSunriseColor(time_t currentTime)
 {
     // Beginning of the sunrise
@@ -26,7 +31,7 @@ RgbColor ColorProvider::getSunriseColor(time_t currentTime)
         updateSunriseColor();
     m_prevTime = currentTime;
 
-    logger.log(LOG_DEBUG, "Sunrise color: H%3d S%.3f L%.3f", (int)(m_hslColor.H * 360), m_hslColor.S, m_hslColor.L);
+    //logger.log(LOG_DEBUG, "Sunrise color: H%3d S%.3f L%.3f", (int)(m_hslColor.H * 360), m_hslColor.S, m_hslColor.L);
     return RgbColor(m_hslColor);
 }
 

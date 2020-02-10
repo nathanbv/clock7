@@ -12,6 +12,7 @@ class ColorProvider
 public:
     ColorProvider();
     ~ColorProvider() { }
+    void resetSunriseColor(void);
     RgbColor getSunriseColor(time_t currentTime);
 
 private:

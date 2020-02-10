@@ -63,8 +63,10 @@ void Clock::update(void)
         //logger.log(LOG_DEBUG, "Sunrise color: R%3d G%3d B%3d", colorTmp.R, colorTmp.G, colorTmp.B);
     }
     // Otherwise use default one
-    else
+    else {
+        m_colorProvider.resetSunriseColor();
         set_color(onColor);
+    }
 
     display(); // Print the current time on the LED seven segments
 }

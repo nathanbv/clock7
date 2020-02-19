@@ -83,7 +83,8 @@ const bool TimeProvider::is_sunrise(void)
     time_t timeNow = now();
     time_t todaysSunriseBeginning = previousMidnight(timeNow) + sunriseBeginning;
     time_t todaysSunriseEnd =       previousMidnight(timeNow) + sunriseEnd;
-    return ((todaysSunriseBeginning < timeNow) && (timeNow < todaysSunriseEnd));
+    bool isWeekEnd = (dayOfWeek(timeNow) == 1 /* Sunday */) || (dayOfWeek(timeNow) == 7 /* Saturday */);
+    return (!isWeekEnd && (todaysSunriseBeginning < timeNow) && (timeNow < todaysSunriseEnd));
 }
 
 time_t TimeProvider::sync_server_time(void)

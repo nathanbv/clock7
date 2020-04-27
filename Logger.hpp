@@ -22,6 +22,10 @@ class Logger
 public:
     void init(logLevel thresh, uint32_t rate = 9600);
     void log(const logLevel prio, const char * format, ...);
+    String uint_to_string(uint64_t input,
+                          uint8_t base = HEX,
+                          uint8_t digitNb = 0,
+                          bool addPrefix = true);
 
 private:
     void log_write(const logLevel prio, const char * format, va_list args);

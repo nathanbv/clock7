@@ -27,7 +27,7 @@ Clock clock7; // A clock made of NeoPixel seven segments displays
 
 void setup()
 {
-    logger.init(LOG_DEBUG);
+    logger.init(LOG_DEBUG, 115200);
 
     strip.Begin();
     strip.Show(); // Resets the strip to black

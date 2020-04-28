@@ -52,6 +52,13 @@ void Counter::init(void)
     set_color(onColor);
 }
 
+void Counter::reset(void) {
+    m_count = 0;
+    m_prevTime = 0;
+    set_color(offColor);
+    strip.Show();
+}
+
 // Sets the color on the whole display
 void Counter::set_color(RgbColor color)
 {
@@ -63,12 +70,18 @@ void Counter::set_color(RgbColor color)
 
 void Counter::update(void)
 {
-    if (millis() >= (m_prevTime + m_interTime)) // Update the display every second
+    // Print the initial state of the counter i.e. 0
+    if (m_prevTime == 0)
+    {
+        m_prevTime = millis();
+        display();
+    }
+    // Update the display every second
+    else if (millis() >= (m_prevTime + m_interTime))
     {
         m_prevTime = millis();
         updateCounter();
-        logger.log(LOG_INFO, "%04d", m_count);
-        display(m_count); // Print countup on the digits
+        display(); // Print countup on the digits
     }
 }
 
@@ -79,8 +92,9 @@ void Counter::updateCounter(void)
         m_count = 0;
 }
 
-void Counter::display(uint16_t num)
+void Counter::display(void)
 {
+    uint16_t num = m_count;
     for (SevenSeg & digit : m_digits)
     {
         digit.display(SevenSeg::indexToChar(num % 10));
@@ -92,4 +106,5 @@ void Counter::display(uint16_t num)
         dot.display((m_count % 2) ? false : true);
     }
     strip.Show();
+    logger.log(LOG_INFO, "%04d", m_count);
 }

@@ -17,10 +17,11 @@ public:
     Clock();
     ~Clock();
     void init(void);
+    void reset(void);
     void update(void);
-    void display(void);
 
 private:
+    void display(bool forceDisplay);
     void set_color(RgbColor color);
 
     time_t m_prevTime;

@@ -15,9 +15,10 @@ void setup_wifi(void)
     logger.log(LOG_DEBUG, "Connecting WiFi on %s", wifiSSID.c_str());
     while (WiFi.status() != WL_CONNECTED)
     {
-        logger.log(LOG_DEBUG, "....");
         wifiInitCounter.update();
+        logger.log(LOG_DEBUG, "....");
         delay(250);
     }
+    wifiInitCounter.reset();
     logger.log(LOG_INFO, "WiFi connected @%s on %s", WiFi.localIP().toString().c_str(), wifiSSID.c_str());
 }

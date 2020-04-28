@@ -49,10 +49,32 @@ void Clock::init()
     set_color(onColor);
 }
 
+void Clock::reset(void) {
+    m_prevTime = 0;
+    set_color(offColor);
+    strip.Show();
+}
+
+// Sets the color on the whole clock
+void Clock::set_color(RgbColor color)
+{
+    for (SevenSeg & digit : m_digits)
+        digit.set_color(color);
+    for (CenterDot & dot : m_dots)
+        dot.set_color(color);
+}
+
 void Clock::update(void)
 {
+    if (!m_timeProvider.is_ready())
+        return;
+
+    // When the clock is not yet displayed, force the initialization of the display
+    bool forceDisplay = false;
+    if (m_prevTime == 0)
+        forceDisplay = true;
     // Update the display only if time has changed
-    if (!m_timeProvider.is_ready() || m_timeProvider.get_time() == m_prevTime)
+    else if (m_timeProvider.get_time() == m_prevTime)
         return;
 
     m_prevTime = m_timeProvider.get_time(); // Get the current time accurate to the second
@@ -68,19 +90,10 @@ void Clock::update(void)
         set_color(onColor);
     }
 
-    display(); // Print the current time on the LED seven segments
+    display(forceDisplay); // Print the current time on the LED seven segments
 }
 
-// Sets the color on the whole clock
-void Clock::set_color(RgbColor color)
-{
-    for (SevenSeg & digit : m_digits)
-        digit.set_color(color);
-    for (CenterDot & dot : m_dots)
-        dot.set_color(color);
-}
-
-void Clock::display(void)
+void Clock::display(bool forceDisplay)
 {
     // Get the time as a decimal number with the form HHMM
     uint16_t timeDesc = m_timeProvider.get_decimal_time();
@@ -96,6 +109,6 @@ void Clock::display(void)
     strip.Show();
 
     // Log time to serial every minute
-    if ((m_prevTime % 60) == 0)
+    if ((m_prevTime % 60) == 0 || forceDisplay)
         logger.log(LOG_INFO, "%s", m_timeProvider.get_date().c_str());
 }

@@ -16,12 +16,13 @@ public:
     Counter();
     ~Counter();
     void init(void);
+    void reset(void);
     void update(void);
 
 private:
     void set_color(RgbColor color);
     void updateCounter(void);
-    void display(uint16_t num);
+    void display(void);
 
     // Increment the count, depends on how many SevenSegs are used
     const uint8_t m_inc;

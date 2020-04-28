@@ -36,7 +36,6 @@ void setup()
 
 #ifndef TEST_MODE
     clock7.init();
-    clock7.display();
 #elif defined(TEST_COUNTER_MODE)
     logger.log(LOG_WARN, "TEST COUNTER MODE ENABLED");
     testCounter.init();

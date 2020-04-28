@@ -25,7 +25,7 @@ public:
     void set_color(uint8_t red, uint8_t green, uint8_t blue) { set_color(RgbColor(red, green, blue)); }
     void display(uint8_t segChar);
 
-    static const uint8_t indexToChar(int indexChar) {
+    static uint8_t indexToChar(int indexChar) {
         static const uint8_t badCharac = 0b0000100; // '‾', value used for not supported characters
         static const uint8_t segCharTable[] = {
             0b1111110, // '0'

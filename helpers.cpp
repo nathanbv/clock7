@@ -15,7 +15,7 @@ void setup_wifi(void)
     logger.log(LOG_DEBUG, "Connecting WiFi on %s", wifiSSID.c_str());
     while (WiFi.status() != WL_CONNECTED)
     {
-        logger.log(LOG_DEBUG, "...");
+        logger.log(LOG_DEBUG, "....");
         wifiInitCounter.update();
         delay(250);
     }

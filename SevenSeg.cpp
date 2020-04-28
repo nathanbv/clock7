@@ -8,7 +8,7 @@
 SevenSeg::SevenSeg(uint8_t stripOffset):
         m_stripOffset(stripOffset)
 {
-    logger.log(LOG_DEBUG, "SevenSeg stripOffset %d", m_stripOffset);
+    logger.log(LOG_DEBUG, "SevenSeg  stripOffset %2d", m_stripOffset);
 }
 
 void SevenSeg::set_color(RgbColor color)

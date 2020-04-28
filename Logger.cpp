@@ -68,7 +68,7 @@ void Logger::log_write(const logLevel prio, const char * format, va_list args)
 
 const char * Logger::logLevel_to_str(const logLevel type)
 {
-    switch(type)
+    switch (type)
     {
         case LOG_CRIT:   return "FATAL:  ";
         case LOG_ERR:    return "ERROR:  ";

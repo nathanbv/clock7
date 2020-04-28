@@ -37,7 +37,7 @@ void TimeProvider::init(void)
 #endif
 
     setSyncProvider(sync_server_time); // Set the function used to synchronize the time
-    setSyncInterval(300);              // Sync time every 5 minutes
+    setSyncInterval(5.5 * 60);         // Sync time every 5 minutes and 30 seconds
 }
 
 bool TimeProvider::is_ready()

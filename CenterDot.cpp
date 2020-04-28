@@ -8,7 +8,7 @@
 CenterDot::CenterDot(uint8_t stripOffset):
         m_stripOffset(stripOffset)
 {
-    logger.log(LOG_DEBUG, "CenterDot stripOffset %d", m_stripOffset);
+    logger.log(LOG_DEBUG, "CenterDot stripOffset %2d", m_stripOffset);
 }
 
 void CenterDot::set_color(RgbColor color)

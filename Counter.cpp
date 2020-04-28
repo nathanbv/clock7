@@ -71,13 +71,13 @@ void Counter::set_color(RgbColor color)
 void Counter::update(void)
 {
     // Print the initial state of the counter i.e. 0
-    if (m_prevTime == 0)
+    if (m_prevTime == 0UL)
     {
         m_prevTime = millis();
         display();
     }
     // Update the display every second
-    else if (millis() >= (m_prevTime + m_interTime))
+    else if (millis() >= (unsigned long)(m_prevTime + m_interTime))
     {
         m_prevTime = millis();
         updateCounter();

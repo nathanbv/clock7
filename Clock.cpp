@@ -71,7 +71,7 @@ void Clock::update(void)
 
     // When the clock is not yet displayed, force the initialization of the display
     bool forceDisplay = false;
-    if (m_prevTime == 0)
+    if (m_prevTime == 0UL)
         forceDisplay = true;
     // Update the display only if time has changed
     else if (m_timeProvider.get_time() == m_prevTime)

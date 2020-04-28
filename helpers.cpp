@@ -12,12 +12,12 @@ void setup_wifi(void)
     Counter wifiInitCounter;
     wifiInitCounter.init();
     WiFi.begin(wifiSSID, wifiPassword); // Connect to the WiFi
-    logger.log(LOG_DEBUG, "Connecting WiFi on %s", wifiSSID);
+    logger.log(LOG_DEBUG, "Connecting WiFi on %s", wifiSSID.c_str());
     while (WiFi.status() != WL_CONNECTED)
     {
         logger.log(LOG_DEBUG, "...");
         wifiInitCounter.update();
         delay(250);
     }
-    logger.log(LOG_INFO, "WiFi connected @%s on %s", WiFi.localIP().toString().c_str(), wifiSSID);
+    logger.log(LOG_INFO, "WiFi connected @%s on %s", WiFi.localIP().toString().c_str(), wifiSSID.c_str());
 }

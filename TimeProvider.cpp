@@ -9,6 +9,16 @@
 #include <sstream>
 #include <TimeLib.h>
 
+// Fix errors in macros from TimeLib.h v1.6
+#undef  minutesToTime_t
+#define minutesToTime_t(M) ((M) * SECS_PER_MIN)
+#undef  hoursToTime_t
+#define hoursToTime_t(H)   ((H) * SECS_PER_HOUR)
+#undef  daysToTime_t
+#define daysToTime_t(D)    ((D) * SECS_PER_DAY)
+#undef  weeksToTime_t
+#define weeksToTime_t(W)   ((W) * SECS_PER_WEEK)
+
 #include "config.h"
 
 using namespace std;
@@ -78,7 +88,7 @@ const string TimeProvider::to_double_digit(const int digits)
     return ret.str();
 }
 
-const bool TimeProvider::is_sunrise(void)
+bool TimeProvider::is_sunrise(void)
 {
     time_t timeNow = now();
     time_t todaysSunriseBeginning = previousMidnight(timeNow) + sunriseBeginning;

@@ -10,20 +10,22 @@
 
 #include "config.h"
 #include "helpers.h"
+#include "IrRemoteHandler.hpp"
+#include "Clock.hpp"
+#include "Counter.hpp"
 
 static const uint8_t nbTotalPixel = (nbSevenSeg * nbSegPerSevenSeg * nbPixelPerSeg) + (nbCenterDot * nbPixelPerDot);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(nbTotalPixel); // Uses ESP8266 GPIO3 (RX on NodeMCU & co)
 
+// Handler to receive infrared commands from a remote
+static IrRemoteHandler irRemoteHandler;
 
-#ifdef TEST_COUNTER_MODE
-#include "Counter.hpp"
+// A clock made of NeoPixel seven segments displays
+static Clock clock7;
+
 // A display made of NeoPixel seven segments displays and center dots
 // When using more than 2 digits, increment minutes and hour parts at the same time
 static Counter testCounter = Counter((nbSevenSeg > 2) ? 101 : 1);
-#else
-#include "Clock.hpp"
-Clock clock7; // A clock made of NeoPixel seven segments displays
-#endif
 
 void setup()
 {
@@ -34,19 +36,28 @@ void setup()
 
     setup_wifi();
 
-#ifndef TEST_MODE
+    irRemoteHandler.init();
     clock7.init();
-#elif defined(TEST_COUNTER_MODE)
-    logger.log(LOG_WARN, "TEST COUNTER MODE ENABLED");
     testCounter.init();
-#endif
 }
 
 void loop()
 {
-#ifndef TEST_MODE
-    clock7.update();
-#elif defined(TEST_COUNTER_MODE)
-    testCounter.update();
-#endif
+    operatingMode previousMode = currentMode;
+    irRemoteHandler.update();
+    if (previousMode != currentMode) {
+        clock7.reset();
+        testCounter.reset();
+    }
+
+    switch (currentMode) {
+    case CLOCK:
+        clock7.update();
+        break;
+    case TEST_COUNTER:
+        testCounter.update();
+        break;
+    default:
+        break;
+    }
 }

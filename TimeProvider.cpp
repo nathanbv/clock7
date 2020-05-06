@@ -5,9 +5,12 @@
 #include "TimeProvider.hpp"
 
 #include <ArduinoJson.h>
+#include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <sstream>
 #include <TimeLib.h>
+
+#include "helpers.h"
 
 // Fix errors in macros from TimeLib.h v1.6
 #undef  minutesToTime_t
@@ -42,6 +45,8 @@ void TimeProvider::init(void)
 
 bool TimeProvider::is_ready()
 {
+    // Allow the time to be used even when not properly synced when:
+    // timeStatus() == timeNeedsSync
     return timeStatus() != timeNotSet;
 }
 
@@ -99,22 +104,34 @@ bool TimeProvider::is_sunrise(void)
 
 time_t TimeProvider::sync_server_time(void)
 {
-    HTTPClient http;
-    http.begin(getTimeRequest);
-    const int err = http.GET();
-    if (err < 0)
+    if (!is_wifi_connected())
     {
-        logger.log(LOG_ERR, "HTTP PUT error: %s", err);
-        http.end();
+        logger.log(LOG_ERR, "%s: WiFi is not connected!", __func__);
+        return 0UL;
+    }
+
+    WiFiClient wifiClient;
+    HTTPClient httpClientRequest;
+    if (!httpClientRequest.begin(wifiClient, getTimeRequest))
+    {
+        logger.log(LOG_ERR, "%s: Unable to connect using HTTP!", __func__);
+        return 0UL;
+    }
+
+    const int httpRetCode = httpClientRequest.GET();
+    if (httpRetCode < 0)
+    {
+        logger.log(LOG_ERR, "%s: HTTP GET error: [%d] %s", __func__, httpRetCode, httpClientRequest.errorToString(httpRetCode).c_str());
+        httpClientRequest.end();
         return 0UL;
     }
 
     // JSON string from the request should look like that:
     // { "status": "OK", "message": "", "timestamp": 1234567890 }
     DynamicJsonDocument doc(s_jsonResponseSize);
-    deserializeJson(doc, http.getString());
-    http.end();
-    const char *status = doc["status"];
+    deserializeJson(doc, httpClientRequest.getString());
+    httpClientRequest.end();
+    const char * status = doc["status"];
     if (strcmp(status, "OK") == 0)
     {
         logger.log(LOG_DEBUG, "Time synchronized from distant server");
@@ -122,8 +139,8 @@ time_t TimeProvider::sync_server_time(void)
     }
     else
     {
-        const char *message = doc["message"];
-        logger.log(LOG_INFO, "%s API error: %s", status, message);
+        const char * message = doc["message"];
+        logger.log(LOG_ERR, "%s: %s API error: %s", __func__, status, message);
         return 0UL;
     }
 }

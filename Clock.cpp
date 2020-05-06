@@ -19,6 +19,7 @@ Clock::~Clock()
 
 void Clock::init()
 {
+    logger.log(LOG_DEBUG, "Clock::%s", __func__);
     // Initialize the most crucial part of a clock...
     m_timeProvider.init();
 

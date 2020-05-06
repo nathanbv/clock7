@@ -31,6 +31,8 @@ Counter::~Counter()
 
 void Counter::init(void)
 {
+    logger.log(LOG_DEBUG, "Counter::%s", __func__);
+
     // If there is more than 2 SevenSeg digits, we need to account for the CenterDots
     const uint8_t nbSevenSegPerSide = (nbSevenSeg > 2) ? 2 : nbSevenSeg;
 

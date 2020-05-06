@@ -15,6 +15,7 @@ IrRemoteHandler::IrRemoteHandler():
 { }
 
 void IrRemoteHandler::init(void) {
+    logger.log(LOG_DEBUG, "IrRemoteHandler::%s", __func__);
     m_irRec.enableIRIn(); // Start the receiver
 }
 

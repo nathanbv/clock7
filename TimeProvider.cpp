@@ -34,6 +34,7 @@ static const time_t sunriseEnd       = sunriseBeginning + minutesToTime_t(10);
 
 void TimeProvider::init(void)
 {
+    logger.log(LOG_DEBUG, "TimeProvider::%s", __func__);
 #ifdef TEST_SET_TIME
     setTime(SET_TIME_HOUR, SET_TIME_MINUTE, 0 /* sec */, 1 /* day */, 1 /* mnth */, 2000 /* yr */);
     return;

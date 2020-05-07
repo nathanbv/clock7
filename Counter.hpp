@@ -5,9 +5,12 @@
 #ifndef COUNTER_HPP
 #define COUNTER_HPP
 
-#include "SevenSeg.hpp"
-#include "CenterDot.hpp"
 #include <vector>
+
+#include "DisplayElement.hpp"
+
+class CenterDot;
+class SevenSeg;
 
 class Counter
 {
@@ -29,8 +32,8 @@ private:
     uint16_t m_count; // Count to display
     unsigned long m_prevTime; // Last timestamp at which the display was updated
     unsigned long m_interTime; // Time interval between two updates of the display
-    std::vector<SevenSeg> m_digits;
-    std::vector<CenterDot> m_dots;
+    std::vector<SevenSeg *>  m_digits;
+    std::vector<CenterDot *> m_dots;
 
     static const uint16_t s_updatePeriodInMSec;
 };

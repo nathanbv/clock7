@@ -3,10 +3,11 @@
  */
 
 #include "SevenSeg.hpp"
+
 #include "config.h"
 
 SevenSeg::SevenSeg(uint8_t stripOffset):
-        m_stripOffset(stripOffset)
+        DisplayElement(stripOffset)
 {
     logger.log(LOG_DEBUG, "SevenSeg  stripOffset %2d", m_stripOffset);
 }

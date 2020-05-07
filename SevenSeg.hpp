@@ -13,13 +13,12 @@
 #ifndef SEVENSEG_HPP
 #define SEVENSEG_HPP
 
-#include <NeoPixelBus.h>
+#include "DisplayElement.hpp"
 
-class SevenSeg
+class SevenSeg: public DisplayElement
 {
 public:
     SevenSeg(uint8_t stripOffset);
-    ~SevenSeg() { }
 
     void set_color(RgbColor color);
     void set_color(uint8_t red, uint8_t green, uint8_t blue) { set_color(RgbColor(red, green, blue)); }
@@ -96,10 +95,6 @@ public:
         }
         return segCharTable[indexChar];
     };
-
-private:
-    const uint8_t m_stripOffset;
-    RgbColor m_color;
 };
 
 #endif // SEVENSEG_HPP

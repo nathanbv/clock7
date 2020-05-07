@@ -3,7 +3,10 @@
  */
 
 #include "Clock.hpp"
+
 #include "config.h"
+#include "CenterDot.hpp"
+#include "SevenSeg.hpp"
 
 Clock::Clock():
         m_prevTime(0),
@@ -13,8 +16,12 @@ Clock::Clock():
 
 Clock::~Clock()
 {
-    m_digits.clear();
+    for (SevenSeg * digit : m_digits)
+        delete digit;
     m_dots.clear();
+    for (CenterDot * dot : m_dots)
+        delete dot;
+    m_digits.clear();
 }
 
 void Clock::init()
@@ -34,17 +41,17 @@ void Clock::init()
     const uint8_t nbSevenSegPerSide = 2;
     // 2 digits are used for the minute part of the clock
     for (uint8_t iter = 0; iter < nbSevenSegPerSide; ++iter)
-        m_digits.push_back(SevenSeg(iter * nbPixelPerSeg * nbSegPerSevenSeg));
+        m_digits.push_back(new SevenSeg(iter * nbPixelPerSeg * nbSegPerSevenSeg));
 
     // 2 dots in the center, between minutes and hours
     uint8_t centerOffset = nbSevenSegPerSide * nbPixelPerSeg * nbSegPerSevenSeg;
     for (uint8_t iter = 0; iter < nbCenterDot; ++iter)
-        m_dots.push_back(CenterDot(centerOffset + (iter * nbPixelPerDot)));
+        m_dots.push_back(new CenterDot(centerOffset + (iter * nbPixelPerDot)));
 
     // 2 digits are used for the hour part of the clock
     uint8_t hourPartOffset = centerOffset + (nbCenterDot * nbPixelPerDot);
     for (uint8_t iter = 0; iter < nbSevenSegPerSide; ++iter)
-        m_digits.push_back(SevenSeg(hourPartOffset + (iter * nbPixelPerSeg * nbSegPerSevenSeg)));
+        m_digits.push_back(new SevenSeg(hourPartOffset + (iter * nbPixelPerSeg * nbSegPerSevenSeg)));
 
     // Set the default color
     set_color(onColor);
@@ -59,10 +66,10 @@ void Clock::reset(void) {
 // Sets the color on the whole clock
 void Clock::set_color(RgbColor color)
 {
-    for (SevenSeg & digit : m_digits)
-        digit.set_color(color);
-    for (CenterDot & dot : m_dots)
-        dot.set_color(color);
+    for (DisplayElement * digit : m_digits)
+        digit->set_color(color);
+    for (DisplayElement * dot : m_dots)
+        dot->set_color(color);
 }
 
 void Clock::update(void)
@@ -98,14 +105,14 @@ void Clock::display(bool forceDisplay)
 {
     // Get the time as a decimal number with the form HHMM
     uint16_t timeDesc = m_timeProvider.get_decimal_time();
-    for (SevenSeg & digit : m_digits)
+    for (DisplayElement * digit : m_digits)
     {
-        digit.display(SevenSeg::indexToChar(timeDesc % 10));
+        digit->display(SevenSeg::indexToChar(timeDesc % 10));
         timeDesc /= 10;
     }
     // Light-up center dots
-    for (CenterDot & dot : m_dots)
-        dot.display(true);
+    for (DisplayElement * dot : m_dots)
+        dot->display(1);
 
     strip.Show();
 

@@ -34,7 +34,9 @@ void setup()
     strip.Begin();
     strip.Show(); // Resets the strip to black
 
+#ifndef TEST_SET_TIME
     setup_wifi();
+#endif
 
     irRemoteHandler.init();
     clock7.init();

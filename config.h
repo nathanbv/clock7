@@ -11,8 +11,6 @@ extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 #include "private.h"
 #include "Logger.hpp"
 
-// TEST_COUNTER_MODE: Displays a counter counting up on the defined number of digits
-//#define TEST_COUNTER_MODE 1
 // TEST_SET_TIME: Sets the clock time to a specific time
 //#define TEST_SET_TIME 1
 //#define SET_TIME_HOUR 7

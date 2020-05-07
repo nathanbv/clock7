@@ -39,6 +39,7 @@ void setup()
 #endif
 
     irRemoteHandler.init();
+    display7.init();
     clock7.init();
     testCounter.init();
 }

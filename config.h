@@ -10,6 +10,7 @@ extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 #include "private.h"
 #include "Logger.hpp"
+#include "Display7.hpp"
 
 // TEST_SET_TIME: Sets the clock time to a specific time
 //#define TEST_SET_TIME 1

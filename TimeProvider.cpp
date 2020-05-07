@@ -27,6 +27,7 @@
 using namespace std;
 
 const size_t TimeProvider::s_jsonResponseSize = JSON_OBJECT_SIZE(3) + 40;
+const time_t TimeProvider::s_timeSyncInterval = 5 * 60; // Sync time every 5 minutes
 
 // Sunrise starts at 8:01 every morning and ends 15 minutes later
 static const time_t sunriseBeginning = hoursToTime_t(8) + minutesToTime_t(0);
@@ -41,7 +42,7 @@ void TimeProvider::init(void)
 #endif
 
     setSyncProvider(sync_server_time); // Set the function used to synchronize the time
-    setSyncInterval(5.5 * 60);         // Sync time every 5 minutes and 30 seconds
+    setSyncInterval(s_timeSyncInterval); // Must be done after setting the provider function
 }
 
 bool TimeProvider::is_ready()
@@ -69,7 +70,7 @@ const string TimeProvider::get_date(void)
 }
 
 // Returns "HH:MM:SS DD.MM.YYYY"
-const string TimeProvider::get_date(time_t fromTime)
+string TimeProvider::get_date(time_t fromTime)
 {
     ostringstream date;
     date << to_double_digit(hour(fromTime)) << ":";
@@ -81,7 +82,7 @@ const string TimeProvider::get_date(time_t fromTime)
     return date.str();
 }
 
-const string TimeProvider::to_double_digit(const int digits)
+string TimeProvider::to_double_digit(const int digits)
 {
     if (digits > 99 || digits < 0)
         logger.log(LOG_WARN, "Unexpected number (%d)", digits);
@@ -105,6 +106,10 @@ bool TimeProvider::is_sunrise(void)
 
 time_t TimeProvider::sync_server_time(void)
 {
+    // Hack to be able to call now() while syncing the time
+    setSyncInterval(s_timeSyncInterval);
+    logger.log(LOG_DEBUG, "%s @%s", __func__, TimeProvider::get_date(now()).c_str());
+
     if (!is_wifi_connected())
     {
         logger.log(LOG_ERR, "%s: WiFi is not connected!", __func__);
@@ -135,8 +140,13 @@ time_t TimeProvider::sync_server_time(void)
     const char * status = doc["status"];
     if (strcmp(status, "OK") == 0)
     {
-        logger.log(LOG_DEBUG, "Time synchronized from distant server");
-        return doc["timestamp"];
+        const time_t syncTime = doc["timestamp"];
+        const time_t currentTime = now();
+        const time_t timeDrift = currentTime - syncTime;
+        logger.log(LOG_DEBUG, "Time synchronized from distant server with %ld sec drift (internal clock is %s)",
+                timeDrift,
+                (timeDrift == 0) ? "ok" : ((timeDrift < 0) ? "too slow" : "too fast"));
+        return syncTime;
     }
     else
     {

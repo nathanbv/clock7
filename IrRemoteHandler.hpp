@@ -8,23 +8,13 @@
 #include <IRrecv.h>
 
 enum operatingMode {
-    OFF = 0,
+    DISPLAY_OFF = 0,
     CLOCK,
     SETTINGS,
     WEATHER,
     TEST_COUNTER,
+    INVALID_OPERATING_MODE
 };
-
-//const char * operatingModeToString(operatingMode mode) {
-//    switch (mode) {
-//    case OFF:          return "OFF";
-//    case CLOCK:        return "CLOCK";
-//    case SETTINGS:     return "SETTINGS";
-//    case WEATHER:      return "WEATHER";
-//    case TEST_COUNTER: return "TEST_COUNTER";
-//    }
-//    return "UNKNOWN_OPERATING_MODE";
-//}
 
 extern operatingMode currentMode;
 

@@ -7,6 +7,18 @@
 
 operatingMode currentMode = CLOCK;
 
+static const char * operatingModeToString(operatingMode mode) {
+    switch (mode) {
+    case DISPLAY_OFF:  return "DISPLAY_OFF";
+    case CLOCK:        return "CLOCK";
+    case SETTINGS:     return "SETTINGS";
+    case WEATHER:      return "WEATHER";
+    case TEST_COUNTER: return "TEST_COUNTER";
+    case INVALID_OPERATING_MODE: return "INVALID_OPERATING_MODE";
+    }
+    return "Unknown operatingMode!";
+}
+
 const uint64_t IrRemoteHandler::s_mask32bits = 0xFFFF;
 const uint16_t IrRemoteHandler::s_irRecPin = 14; // D5
 
@@ -22,7 +34,7 @@ void IrRemoteHandler::init(void) {
 void IrRemoteHandler::update(void) {
     decode_results results;
     if (m_irRec.decode(&results)) {
-        printKeycode(results.value);
+        //printKeycode(results.value); // Print key code received, useful to create a map of the remote
         uint32_t keycode = results.value & s_mask32bits; // From 64 bits, keep only 32 LSB
         processKeycode(keycode);
 
@@ -35,28 +47,15 @@ void IrRemoteHandler::printKeycode(uint64_t val) {
 }
 
 void IrRemoteHandler::processKeycode(uint32_t val) {
-    int8_t keyVal = -1;
-    operatingMode newMode;
+    operatingMode newMode = INVALID_OPERATING_MODE;
     switch (val) {
-    case 0xFC03:
-        keyVal = 1;
-        newMode = CLOCK;
-        break;
-    case 0xC43B:
-        keyVal = 3;
-        newMode = SETTINGS;
-        break;
-    case 0xC23D:
-        keyVal = 4;
-        newMode = TEST_COUNTER;
-        break;
-    default: break;
+    /* Temporary key values, from the only remote at arms reach */
+    case 0xFC03: newMode = CLOCK; break;
+    case 0xC43B: newMode = DISPLAY_OFF; break;
+    case 0xC23D: newMode = TEST_COUNTER; break;
     }
-    if (keyVal != -1) {
-        logger.log(LOG_DEBUG, "You pressed %d!", keyVal);
+    if (newMode != INVALID_OPERATING_MODE && newMode != currentMode) {
         currentMode = newMode;
-    }
-    else {
-        logger.log(LOG_DEBUG, "You pressed an unrecognized key...");
+        logger.log(LOG_DEBUG, "Entering %s mode", operatingModeToString(currentMode));
     }
 }

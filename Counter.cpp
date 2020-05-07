@@ -79,7 +79,7 @@ void Counter::update(void)
         display();
     }
     // Update the display every second
-    else if (millis() >= (unsigned long)(m_prevTime + m_interTime))
+    else if (millis() >= (m_prevTime + m_interTime))
     {
         m_prevTime = millis();
         updateCounter();

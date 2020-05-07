@@ -76,6 +76,7 @@ const char * Logger::logLevel_to_str(const logLevel type)
         case LOG_NOTICE: return "NOTE:   ";
         case LOG_INFO:   return "INFO:   ";
         case LOG_DEBUG:  return "DEBUG:  ";
+        case LOG_OFF:    break;
     }
     return "LOG:  ";
 }

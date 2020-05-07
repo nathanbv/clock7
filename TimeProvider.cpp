@@ -108,7 +108,7 @@ time_t TimeProvider::sync_server_time(void)
     if (!is_wifi_connected())
     {
         logger.log(LOG_ERR, "%s: WiFi is not connected!", __func__);
-        return 0UL;
+        return 0;
     }
 
     WiFiClient wifiClient;
@@ -116,7 +116,7 @@ time_t TimeProvider::sync_server_time(void)
     if (!httpClientRequest.begin(wifiClient, getTimeRequest))
     {
         logger.log(LOG_ERR, "%s: Unable to connect using HTTP!", __func__);
-        return 0UL;
+        return 0;
     }
 
     const int httpRetCode = httpClientRequest.GET();
@@ -124,7 +124,7 @@ time_t TimeProvider::sync_server_time(void)
     {
         logger.log(LOG_ERR, "%s: HTTP GET error: [%d] %s", __func__, httpRetCode, httpClientRequest.errorToString(httpRetCode).c_str());
         httpClientRequest.end();
-        return 0UL;
+        return 0;
     }
 
     // JSON string from the request should look like that:
@@ -142,6 +142,6 @@ time_t TimeProvider::sync_server_time(void)
     {
         const char * message = doc["message"];
         logger.log(LOG_ERR, "%s: %s API error: %s", __func__, status, message);
-        return 0UL;
+        return 0;
     }
 }

@@ -5,7 +5,14 @@
 #include "IrRemoteHandler.hpp"
 #include "config.h"
 
-operatingMode currentMode = CLOCK;
+// Milli seconds between 2 press of the on/off button to be interpreted as a toggle
+static const unsigned long toggleDelay = 1500;
+
+// Default mode to go back to when toggling on/off
+static const operatingMode defaultMode = CLOCK;
+
+// Global variable indicating the current operating mode
+operatingMode currentMode = defaultMode;
 
 static const char * operatingModeToString(operatingMode mode) {
     switch (mode) {
@@ -23,7 +30,8 @@ const uint64_t IrRemoteHandler::s_mask32bits = 0xFFFF;
 const uint16_t IrRemoteHandler::s_irRecPin = 14; // D5
 
 IrRemoteHandler::IrRemoteHandler():
-        m_irRec(s_irRecPin)
+        m_irRec(s_irRecPin),
+        m_prevTimeToggle(0)
 { }
 
 void IrRemoteHandler::init(void) {
@@ -54,8 +62,24 @@ void IrRemoteHandler::processKeycode(uint32_t val) {
     case 0xC43B: newMode = DISPLAY_OFF; break;
     case 0xC23D: newMode = TEST_COUNTER; break;
     }
-    if (newMode != INVALID_OPERATING_MODE && newMode != currentMode) {
-        currentMode = newMode;
-        logger.log(LOG_DEBUG, "Entering %s mode", operatingModeToString(currentMode));
+
+    if (newMode != INVALID_OPERATING_MODE) {
+        if (newMode == DISPLAY_OFF) {
+            // If 2 events are received promptly, debounce it by keeping the same mode
+            if (millis() < m_prevTimeToggle + toggleDelay) {
+                newMode = currentMode;
+            }
+            else {
+                m_prevTimeToggle = millis();
+                // Allow a delay between two presses of the on/off button to be interpreted as a toggle
+                if (currentMode == DISPLAY_OFF)
+                    newMode = defaultMode;
+            }
+        }
+        // Switch to the new mode
+        if (newMode != currentMode) {
+            currentMode = newMode;
+            logger.log(LOG_DEBUG, "Entering %s mode", operatingModeToString(currentMode));
+        }
     }
 }

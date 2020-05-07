@@ -31,6 +31,7 @@ private:
     void processKeycode(uint32_t val);
 
     IRrecv m_irRec;
+    unsigned long m_prevTimeToggle;
     static const uint64_t s_mask32bits;
     static const uint16_t s_irRecPin;
 

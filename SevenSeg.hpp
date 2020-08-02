@@ -23,7 +23,7 @@ public:
 
     void set_color(RgbColor color);
     void set_color(uint8_t red, uint8_t green, uint8_t blue) { set_color(RgbColor(red, green, blue)); }
-    void display(uint8_t segChar);
+    void display(uint8_t segChar = 0 /* '0' */);
 
     static uint8_t indexToChar(int indexChar) {
         static const uint8_t badCharac = 0b0000100; // '‾', value used for not supported characters

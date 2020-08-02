@@ -45,14 +45,15 @@ void Clock::init()
     uint8_t hourPartOffset = centerOffset + (nbCenterDot * nbPixelPerDot);
     for (uint8_t iter = 0; iter < nbSevenSegPerSide; ++iter)
         m_digits.push_back(SevenSeg(hourPartOffset + (iter * nbPixelPerSeg * nbSegPerSevenSeg)));
-
-    // Set the default color
-    set_color(onColor);
 }
 
 void Clock::reset(void) {
     m_prevTime = 0;
     set_color(offColor);
+    for (SevenSeg & digit : m_digits)
+        digit.display();
+    for (CenterDot & dot : m_dots)
+        dot.display(false);
     strip.Show();
 }
 
@@ -72,8 +73,10 @@ void Clock::update(void)
 
     // When the clock is not yet displayed, force the initialization of the display
     bool forceDisplay = false;
-    if (m_prevTime == 0)
+    if (m_prevTime == 0) {
         forceDisplay = true;
+        set_color(onColor); // Set the default color
+    }
     // Update the display only if time has changed
     else if (m_timeProvider.get_time() == m_prevTime)
         return;

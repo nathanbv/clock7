@@ -49,15 +49,16 @@ void Counter::init(void)
     uint8_t hourPartOffset = centerOffset + (nbCenterDot * nbPixelPerDot);
     for (uint8_t iter = 0; iter < (nbSevenSeg - nbSevenSegPerSide); ++iter)
         m_digits.push_back(SevenSeg(hourPartOffset + (iter * nbPixelPerSeg * nbSegPerSevenSeg)));
-
-    // Set the default color
-    set_color(onColor);
 }
 
 void Counter::reset(void) {
     m_count = 0;
     m_prevTime = 0;
     set_color(offColor);
+    for (SevenSeg & digit : m_digits)
+        digit.display();
+    for (CenterDot & dot : m_dots)
+        dot.display(false);
     strip.Show();
 }
 
@@ -75,6 +76,7 @@ void Counter::update(void)
     // Print the initial state of the counter i.e. 0
     if (m_prevTime == 0UL)
     {
+        set_color(onColor); // Set the default color
         m_prevTime = millis();
         display();
     }

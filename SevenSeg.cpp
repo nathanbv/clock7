@@ -16,7 +16,7 @@ void SevenSeg::set_color(RgbColor color)
     m_color = color;
 }
 
-void SevenSeg::display(uint8_t segChar)
+void SevenSeg::display(uint8_t segChar /* =0 */)
 {
     for (int8_t iterSeg = 6; iterSeg >= 0; --iterSeg)
     {

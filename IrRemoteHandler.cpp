@@ -6,7 +6,7 @@
 #include "config.h"
 
 // Milli seconds between 2 press of the on/off button to be interpreted as a toggle
-static const unsigned long toggleDelay = 1500;
+static const unsigned long toggleDelay = 650;
 
 // Default mode to go back to when toggling on/off
 static const operatingMode defaultMode = CLOCK;

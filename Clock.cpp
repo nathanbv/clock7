@@ -114,5 +114,5 @@ void Clock::display(bool forceDisplay)
 
     // Log time to serial every minute
     if ((m_prevTime % 60) == 0 || forceDisplay)
-        logger.log(LOG_INFO, "%s", m_timeProvider.get_date().c_str());
+        logger.log(LOG_INFO, "%s", m_timeProvider.get_date_str().c_str());
 }

@@ -29,13 +29,14 @@ using namespace std;
 const size_t TimeProvider::s_jsonResponseSize = JSON_OBJECT_SIZE(3) + 40;
 const time_t TimeProvider::s_timeSyncInterval = 5 * 60; // Sync time every 5 minutes
 
-// Sunrise starts at 8:01 every morning and ends 15 minutes later
-static const time_t sunriseBeginning = hoursToTime_t(8) + minutesToTime_t(0);
+// Sunrise starts at 7:50 every morning and ends 10 minutes later
+static const time_t sunriseBeginning = hoursToTime_t(7) + minutesToTime_t(50);
 static const time_t sunriseEnd       = sunriseBeginning + minutesToTime_t(10);
 
 void TimeProvider::init(void)
 {
-    logger.log(LOG_DEBUG, "TimeProvider::%s", __func__);
+    logger.log(LOG_DEBUG, "TimeProvider::%s sunrise is from %s to %s", __func__,
+            get_time_str(sunriseBeginning).c_str(), get_time_str(sunriseEnd).c_str());
 #ifdef TEST_SET_TIME
     setTime(SET_TIME_HOUR, SET_TIME_MINUTE, 0 /* sec */, 1 /* day */, 1 /* mnth */, 2000 /* yr */);
     return;
@@ -64,18 +65,26 @@ uint16_t TimeProvider::get_decimal_time(void)
     return hour() * 100 + minute();
 }
 
-const string TimeProvider::get_date(void)
+// Returns "HH:MM:SS"
+string TimeProvider::get_time_str(time_t fromTime)
 {
-    return get_date(now());
+    ostringstream time;
+    time << to_double_digit(hour(fromTime)) << ":";
+    time << to_double_digit(minute(fromTime)) << ":";
+    time << to_double_digit(second(fromTime));
+    return time.str();
+}
+
+const string TimeProvider::get_date_str(void)
+{
+    return get_date_str(now());
 }
 
 // Returns "HH:MM:SS DD.MM.YYYY"
-string TimeProvider::get_date(time_t fromTime)
+string TimeProvider::get_date_str(time_t fromTime)
 {
     ostringstream date;
-    date << to_double_digit(hour(fromTime)) << ":";
-    date << to_double_digit(minute(fromTime)) << ":";
-    date << to_double_digit(second(fromTime)) << " ";
+    date << get_time_str(fromTime) << " ";
     date << to_double_digit(day(fromTime)) << ".";
     date << to_double_digit(month(fromTime)) << ".";
     date << year(fromTime);
@@ -108,7 +117,7 @@ time_t TimeProvider::sync_server_time(void)
 {
     // Hack to be able to call now() while syncing the time
     setSyncInterval(s_timeSyncInterval);
-    logger.log(LOG_DEBUG, "%s @%s", __func__, TimeProvider::get_date(now()).c_str());
+    logger.log(LOG_DEBUG, "%s @%s", __func__, TimeProvider::get_date_str(now()).c_str());
 
     if (!is_wifi_connected())
     {

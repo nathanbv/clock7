@@ -66,6 +66,11 @@ void Clock::set_color(RgbColor color)
         dot.set_color(color);
 }
 
+bool Clock::is_sunrise(void)
+{
+    return m_timeProvider.is_sunrise();
+}
+
 void Clock::update(void)
 {
     if (!m_timeProvider.is_ready())
@@ -83,7 +88,7 @@ void Clock::update(void)
 
     m_prevTime = m_timeProvider.get_time(); // Get the current time accurate to the second
     // If the sun is raising get the appropriate color
-    if (m_timeProvider.is_sunrise()) {
+    if (is_sunrise()) {
         RgbColor colorTmp = m_colorProvider.getSunriseColor(m_timeProvider.get_time());
         set_color(colorTmp);
         //logger.log(LOG_DEBUG, "Sunrise color: R%3d G%3d B%3d", colorTmp.R, colorTmp.G, colorTmp.B);

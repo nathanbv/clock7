@@ -47,6 +47,11 @@ void loop()
 {
     operatingMode previousMode = currentMode;
     irRemoteHandler.update();
+
+    // Wakes up the clock when the sunrise comes
+    if (clock7.is_sunrise())
+        currentMode = CLOCK;
+
     if (previousMode != currentMode) {
         clock7.reset();
         testCounter.reset();

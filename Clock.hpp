@@ -18,6 +18,7 @@ public:
     ~Clock();
     void init(void);
     void reset(void);
+    bool is_sunrise(void);
     void update(void);
 
 private:

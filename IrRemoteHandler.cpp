@@ -27,7 +27,7 @@ static const char * operatingModeToString(operatingMode mode) {
 }
 
 const uint64_t IrRemoteHandler::s_mask32bits = 0xFFFF;
-const uint16_t IrRemoteHandler::s_irRecPin = 14; // D5
+const uint16_t IrRemoteHandler::s_irRecPin = 4; // D2 on ESP8266 NodeMCU
 
 IrRemoteHandler::IrRemoteHandler():
         m_irRec(s_irRecPin),

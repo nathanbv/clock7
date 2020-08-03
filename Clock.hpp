@@ -19,6 +19,7 @@ public:
     void init(void);
     void reset(void);
     bool is_sunrise(void);
+    bool is_sunrise_over(void);
     void update(void);
 
 private:

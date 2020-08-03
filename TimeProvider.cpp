@@ -29,9 +29,11 @@ using namespace std;
 const size_t TimeProvider::s_jsonResponseSize = JSON_OBJECT_SIZE(3) + 40;
 const time_t TimeProvider::s_timeSyncInterval = 5 * 60; // Sync time every 5 minutes
 
-// Sunrise starts at 7:50 every morning and ends 10 minutes later
+// The sunrise animation starts at 7:50 every week day morning and ends 10 minutes later
 static const time_t sunriseBeginning = hoursToTime_t(7) + minutesToTime_t(50);
 static const time_t sunriseEnd       = sunriseBeginning + minutesToTime_t(10);
+// After the sunrise delay (30 minutes) the clock will turn off
+static const time_t sunriseEndDelay  = minutesToTime_t(30);
 
 void TimeProvider::init(void)
 {
@@ -104,6 +106,7 @@ string TimeProvider::to_double_digit(const int digits)
     return ret.str();
 }
 
+// Returns true during the time the sunrise animation should be displayed
 bool TimeProvider::is_sunrise(void)
 {
     time_t timeNow = now();
@@ -111,6 +114,14 @@ bool TimeProvider::is_sunrise(void)
     time_t todaysSunriseEnd =       previousMidnight(timeNow) + sunriseEnd;
     bool isWeekEnd = (dayOfWeek(timeNow) == 1 /* Sunday */) || (dayOfWeek(timeNow) == 7 /* Saturday */);
     return (!isWeekEnd && (todaysSunriseBeginning < timeNow) && (timeNow < todaysSunriseEnd));
+}
+
+// Returns true during 2 seconds after the sunrise animation ended and the delay has passed
+bool TimeProvider::is_sunrise_over(void)
+{
+    time_t timeNow = now();
+    time_t todaysSunriseEndAfterDelay = previousMidnight(timeNow) + sunriseEnd + sunriseEndDelay;
+    return ((todaysSunriseEndAfterDelay < timeNow) && (timeNow < todaysSunriseEndAfterDelay + 2));
 }
 
 time_t TimeProvider::sync_server_time(void)

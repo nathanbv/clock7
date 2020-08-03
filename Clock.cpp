@@ -71,6 +71,11 @@ bool Clock::is_sunrise(void)
     return m_timeProvider.is_sunrise();
 }
 
+bool Clock::is_sunrise_over(void)
+{
+    return m_timeProvider.is_sunrise_over();
+}
+
 void Clock::update(void)
 {
     if (!m_timeProvider.is_ready())

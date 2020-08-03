@@ -51,6 +51,9 @@ void loop()
     // Wakes up the clock when the sunrise comes
     if (clock7.is_sunrise())
         currentMode = CLOCK;
+    // Turn of the clock if it's still displayed after the sunrise animation
+    else if (currentMode == CLOCK && clock7.is_sunrise_over())
+        currentMode = DISPLAY_OFF;
 
     if (previousMode != currentMode) {
         clock7.reset();
@@ -67,4 +70,8 @@ void loop()
     default:
         break;
     }
+
+    // Delay the next loop by 125ms. Allows easier debugging in case something
+    // goes wrong between 2 loops and does not impact much the time tracking.
+    delay(125);
 }
